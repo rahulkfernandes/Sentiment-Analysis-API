@@ -35,23 +35,23 @@ Fine tuning of the “twitter-roberta-base-sentiment-latest” model from Huggin
 
 ## Installation
 Clone git repository
-'''
+```
 git clone https://github.com/rahulkfernandes/Sentiment-Analysis-API.git
-'''
+```
 
 Install dependencies
-'''
+```
 pip install -r requirements.txt
-'''
+```
 
 ## Usage 
 To Train Model
-'''
+```
 cd ml
 python main.py
-'''
+```
 
 To Run Server, copy saved model to app folder and run,
-'''
+```
 uvicorn main:app--reload
-'''
+```
