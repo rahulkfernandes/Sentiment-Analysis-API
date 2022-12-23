@@ -4,11 +4,13 @@ from transformers import pipeline
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent
-MODEL = f'{BASE_DIR}/roberta_senti_tuned_2022-12-23'
+MODEL_NAME = 'roberta_senti_tuned_2022-12-23'
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL)
-model =  AutoModelForSequenceClassification.from_pretrained(MODEL, num_labels=2)
-nlp = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+model_path = f'{BASE_DIR}/{MODEL_NAME}'
+tokenizer = AutoTokenizer.from_pretrained(model_path)
+roberta =  AutoModelForSequenceClassification.from_pretrained(model_path, num_labels=2)
+
+nlp = pipeline("sentiment-analysis", model=roberta, tokenizer=tokenizer)
 
 label = {'LABEL_0': 'Negative', 'LABEL_1': 'Positive'}
 
