@@ -1,2 +1,4 @@
 saved_models/
 ml/airline_sentiment_analysis.csv
+app/roberta_senti_tuned_2022-12-23
+__pycache__
