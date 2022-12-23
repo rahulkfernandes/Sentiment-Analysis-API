@@ -31,7 +31,7 @@ A Sentiment Analysis model is built using HuggingFace and Pytorch. The model is 
 - F1 Score = 0.75
 
 ## Inference
-Fine tuning of the “twitter-roberta-base-sentiment” model from HuggingFace shows the highest metrics with weighted and macro averages of F1 Score at 95%. 
+Fine tuning of the “twitter-roberta-base-sentiment-latest” model from HuggingFace shows the highest metrics with weighted and macro averages of F1 Score at 95%. 
 
 ## Installation
 Clone git repository
