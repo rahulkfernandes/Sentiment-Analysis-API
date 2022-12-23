@@ -9,6 +9,7 @@ from sklearn.pipeline import Pipeline
 from datetime import datetime
 import pickle
 import spacy
+import os
 
 date_time = datetime.now()
 date = date_time.date()
@@ -37,8 +38,15 @@ def MLP(X_train, X_test, y_train, y_test):
     y_pred = clf.predict(X_test)
 
     print(classification_report(y_test,y_pred))
+    save_folder = '../saved_models'
+    if not os.path.exists(save_folder): 
+        os.makedirs(save_folder)
+        print(f"{save_folder} folder created")
+    else:
+        pass
     
-    pickle.dump(clf, open(f"../saved_models/mlp_{date}.pkl", 'wb'))
+    pickle.dump(clf, open(f"{save_folder}/mlp_{date}.pkl", 'wb'))
+    
 def KNN(X_train, X_test, y_train, y_test):
     print("\n=========================KNN============================\n")
 

@@ -41,7 +41,7 @@ class LoadData:
 
     def __init__(self, path):
         self.data = pd.read_csv(path)
-    
+
     def load(self):
         self.data['text'] = self.data['text'].apply(preprocessing)
         self.data = self.data[self.data['text']!='']
@@ -49,7 +49,7 @@ class LoadData:
         self.data['label'] = self.data['airline_sentiment'].map({'negative':0,'positive':1})
         X_train, X_test, y_train, y_test = train_test_split(self.data['text'],self.data['label'], test_size=0.2, random_state=24)
         return X_train, X_test, y_train, y_test
- 
+
     def downsample(self, df):
         positive = df[df['airline_sentiment']=='positive']
         negative = df[df['airline_sentiment']=='negative']
@@ -57,7 +57,7 @@ class LoadData:
         df_balanced = pd.concat([positive, downsampled_negative])
         return df_balanced
 
-class FinDataset(Dataset):
+class TweetDataset(Dataset):
 
     def __init__(self, encodings, labels):
         self.encodings = encodings
@@ -67,23 +67,23 @@ class FinDataset(Dataset):
         item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
         item['labels'] = torch.tensor(self.labels[idx])
         return item
-    
+
     def __len__(self):
         return len(self.labels)
 
 class TrainModel:
 
     def __init__(self, model, tokenizer, X_train, y_train):
-        self.X_train = X_train 
+        self.X_train = X_train
         self.y_train = y_train
         self.model = model
-        self.tokenizer = tokenizer 
+        self.tokenizer = tokenizer
         self.model.to(DEVICE)
         self.train_data = self.create_train_dataset()
 
     def create_train_dataset(self):
         train_encodings = self.tokenizer(self.X_train.tolist(), truncation=True, padding=True)
-        train_data = FinDataset(train_encodings, self.y_train.tolist())
+        train_data = TweetDataset(train_encodings, self.y_train.tolist())
         return train_data
 
     def train(self):
@@ -119,9 +119,9 @@ class Inference():
 
     def create_test_dataset(self):
         test_encodings = self.tokenizer(self.X_test.tolist(), truncation=True, padding=True)
-        test_data = FinDataset(test_encodings, self.y_test.tolist())
+        test_data = TweetDataset(test_encodings, self.y_test.tolist())
         return test_data
-    
+
     def evaluate(self):
         self.model.eval()
         predictions = np.array([])
@@ -142,22 +142,30 @@ class Inference():
         return self.model, self.tokenizer
 
 if __name__ == "__main__":
-    
+
     loader = LoadData("airline_sentiment_analysis.csv")
     X_train, X_test, y_train, y_test = loader.load()
-    print("Data Loaded")
-    
+    print("Data Loaded!")
+
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
     model =  AutoModelForSequenceClassification.from_pretrained(MODEL, num_labels=2, ignore_mismatched_sizes=True)
+    print("Fine Tuning Model.....")
     trainer = TrainModel(model, tokenizer, X_train, y_train)
     tuned_model, tuned_tokenizer = trainer.train()
-    print("Model Trained")
+    print("Model Trained!")
 
     evaluator = Inference(tuned_model, tuned_tokenizer, X_test, y_test)
     eval_model, eval_tokenizer = evaluator.evaluate()
 
+    # Save Model
+    save_folder = '../saved_models'
+    if not os.path.exists(save_folder): 
+        os.makedirs(save_folder)
+        print(f"{save_folder} folder created")
+    else:
+        pass
     date_time = datetime.now()
     date = date_time.date()
-    eval_model.save_pretrained(f"../saved_models/roberta_senti_tuned_{date}")
-    eval_tokenizer.save_pretrained(f"../saved_models/roberta_senti_tuned_{date}")
-    print("Model Saved")
+    eval_model.save_pretrained(f"{save_folder}/roberta_senti_tuned_{date}")
+    eval_tokenizer.save_pretrained(f"{save_folder}/roberta_senti_tuned_{date}")
+    print("Model Saved!")
