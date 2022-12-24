@@ -59,7 +59,7 @@ class LoadData:
         return df_balanced
 
 class TweetDataset(Dataset):
-
+    # Converts to Pytorch Tensors
     def __init__(self, encodings, labels):
         self.encodings = encodings
         self.labels = labels
@@ -109,7 +109,7 @@ class TrainModel:
                 progress_bar.update(1)
         return self.model, self.tokenizer
 
-class Inference():
+class Inference:
 
     def __init__(self, model, tokenizer, X_test, y_test):
         self.X_test = X_test

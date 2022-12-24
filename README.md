@@ -53,5 +53,5 @@ python main.py
 
 To Run Server, copy saved model to app folder and run,
 ```
-uvicorn main:app --reload
+uvicorn server:app --reload
 ```
