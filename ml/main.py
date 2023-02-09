@@ -47,8 +47,15 @@ class LoadData:
         self.data['text'] = self.data['text'].apply(preprocessing)
         self.data = self.data[self.data['text']!='']
         self.data = self.downsample(self.data)
-        self.data['label'] = self.data['airline_sentiment'].map({'negative':0,'positive':1})
-        X_train, X_test, y_train, y_test = train_test_split(self.data['text'],self.data['label'], test_size=0.2, random_state=24)
+        self.data['label'] = self.data['airline_sentiment'].map(
+            {'negative':0,'positive':1}
+            )
+        X_train, X_test, y_train, y_test = train_test_split(
+            self.data['text'],
+            self.data['label'], 
+            test_size=0.2, 
+            random_state=24
+            )
         return X_train, X_test, y_train, y_test
 
     def downsample(self, df):
@@ -83,7 +90,11 @@ class TrainModel:
         self.train_data = self.create_train_dataset()
 
     def create_train_dataset(self):
-        train_encodings = self.tokenizer(self.X_train.tolist(), truncation=True, padding=True)
+        train_encodings = self.tokenizer(
+            self.X_train.tolist(),
+            truncation=True, 
+            padding=True
+            )
         train_data = TweetDataset(train_encodings, self.y_train.tolist())
         return train_data
 
@@ -93,7 +104,12 @@ class TrainModel:
         optimizer = AdamW(self.model.parameters(), lr=LR)
 
         num_training_steps = EPOCH * len(train_loader)
-        lr_scheduler = get_scheduler(name="linear", optimizer=optimizer, num_warmup_steps=WARMUP_STEPS, num_training_steps=num_training_steps)
+        lr_scheduler = get_scheduler(
+            name="linear",
+            optimizer=optimizer,
+            num_warmup_steps=WARMUP_STEPS, 
+            num_training_steps=num_training_steps
+            )
         progress_bar = tqdm(range(num_training_steps))
 
         for epoch in range(EPOCH):
@@ -149,7 +165,11 @@ if __name__ == "__main__":
     print("Data Loaded!")
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    model =  AutoModelForSequenceClassification.from_pretrained(MODEL, num_labels=2, ignore_mismatched_sizes=True)
+    model =  AutoModelForSequenceClassification.from_pretrained(
+        MODEL, 
+        num_labels=2, 
+        ignore_mismatched_sizes=True
+        )
     print("Fine Tuning Model.....")
     trainer = TrainModel(model, tokenizer, X_train, y_train)
     tuned_model, tuned_tokenizer = trainer.train()

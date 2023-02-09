@@ -44,7 +44,11 @@ if __name__ == "__main__":
     # SpaCy - MLP
     start_time = time.time()
     vecs = other_models.Vectorizer(data)
-    X_train, X_test, y_train, y_test = train_test_split(vecs['vector'].values,vecs['label'], test_size=0.2, random_state=24)
+    X_train, X_test, y_train, y_test = train_test_split(
+        vecs['vector'].values,vecs['label'],
+        test_size=0.2,
+        random_state=24
+        )
     X_train_2d = np.stack(X_train)
     X_test_2d = np.stack(X_test)
 
